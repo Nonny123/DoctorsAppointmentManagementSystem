@@ -13,5 +13,7 @@ namespace DAMS.Models
         {
 
         }
+
+        public DbSet<Appointment> Appointments { get; set; }
     }
 }
