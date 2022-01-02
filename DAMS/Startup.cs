@@ -1,9 +1,11 @@
 using DAMS.Models;
 using DAMS.Services;
+using DAMS.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +35,9 @@ namespace DAMS
 
 
             services.AddTransient<IAppointmentService, AppointmentService>();
+            services.AddScoped<IEmailSender, EmailSender>();
+
+
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
             //session

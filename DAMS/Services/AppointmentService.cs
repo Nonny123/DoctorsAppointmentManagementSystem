@@ -1,6 +1,7 @@
 ﻿using DAMS.Models;
 using DAMS.Models.ViewModels;
 using DAMS.Utility;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,12 @@ namespace DAMS.Services
     public class AppointmentService : IAppointmentService
     {
         private readonly ApplicationDbContext _db;
+        private readonly IEmailSender _emailSender;
 
-        public AppointmentService(ApplicationDbContext db)
+        public AppointmentService(ApplicationDbContext db, IEmailSender emailSender)
         {
             _db = db;
+            _emailSender = emailSender;
         }
 
         public async Task<int> AddUpdate(AppointmentVM model)
@@ -22,7 +25,10 @@ namespace DAMS.Services
             var startDate = DateTime.Parse(model.StartDate);
             var endDate = DateTime.Parse(model.StartDate).AddMinutes(Convert.ToDouble(model.Duration));
 
-            if(model != null && model.Id > 0)
+            var patient = _db.Users.FirstOrDefault(u => u.Id == model.PatientId);
+            var doctor = _db.Users.FirstOrDefault(u => u.Id == model.DoctorId);
+
+            if (model != null && model.Id > 0)
             {
                 //update
                 return 1;
@@ -42,6 +48,12 @@ namespace DAMS.Services
                     IsDoctorApproved = false,
                     AdminId = model.AdminId
                 };
+
+                await _emailSender.SendEmailAsync(doctor.Email, "Appointment Created",
+                    $"Your appointment with {patient.Name} is created and in pending status");
+
+                await _emailSender.SendEmailAsync(patient.Email, "Appointment Created",
+                    $"Your appointment with {doctor.Name} is created and in pending status");
 
                 _db.Appointments.Add(appointment);
                 await _db.SaveChangesAsync();
