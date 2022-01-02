@@ -1,5 +1,6 @@
 ﻿using DAMS.Services;
 using DAMS.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,11 @@ using System.Threading.Tasks;
 
 namespace DAMS.Controllers
 {
+    //Authorize only admins to view this page
+    //[Authorize(Roles = Helper.Admin)]
+    
+    //Authorize all signed in users
+    [Authorize(Roles = Helper.Admin)]
     public class AppointmentController : Controller
     {
         private readonly IAppointmentService _appointmentService;
@@ -17,6 +23,7 @@ namespace DAMS.Controllers
             _appointmentService = appointmentService;
         }
 
+        //[Authorize(Roles = Helper.Admin)]
         public IActionResult Index()
         {
             ViewBag.Duration = Helper.GetTimeDropDown();

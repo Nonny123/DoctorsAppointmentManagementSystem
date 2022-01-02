@@ -50,6 +50,14 @@ namespace DAMS
             });
 
             services.AddHttpContextAccessor();
+
+
+            //configure cookie for direction to custome denied page
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Home/AccessDenied");
+
+            });
         
         }
 
