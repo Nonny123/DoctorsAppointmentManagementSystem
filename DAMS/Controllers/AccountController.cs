@@ -1,6 +1,7 @@
 ﻿using DAMS.Models;
 using DAMS.Models.ViewModels;
 using DAMS.Utility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -32,6 +33,8 @@ namespace DAMS.Controllers
         {
             return View();
         }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -41,6 +44,14 @@ namespace DAMS.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    //store username in session variable
+                    var user = await _userManager.FindByNameAsync(model.Email);
+                    HttpContext.Session.SetString(Helper.ssuserName, user.Name);
+
+                    //var userName = HttpContext.Session.GetString("Helper.ssuserName");
+
+
+
                     //return RedirectToAction("Index", "Home");
                     return RedirectToAction("Index", "Appointment");
                 }

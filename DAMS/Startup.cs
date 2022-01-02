@@ -35,6 +35,15 @@ namespace DAMS
             services.AddTransient<IAppointmentService, AppointmentService>();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
+            //session
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => 
+            {
+                options.IdleTimeout = TimeSpan.FromDays(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddHttpContextAccessor();
         
         }
@@ -58,6 +67,8 @@ namespace DAMS
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.UseSession(); // add this(implementation) to the pipeline after adding  //session blok comment above
 
             app.UseEndpoints(endpoints =>
             {
