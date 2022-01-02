@@ -94,6 +94,10 @@ namespace DAMS.Controllers
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                     }
+                    else
+                    {
+                        TempData["newAdminSignUp"] = user.Name;
+                    }
                     
                     return RedirectToAction("Index", "Appointment");
                 }
