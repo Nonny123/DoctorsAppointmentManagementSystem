@@ -1,3 +1,4 @@
+using DAMS.DbInitializer;
 using DAMS.Models;
 using DAMS.Services;
 using DAMS.Utility;
@@ -36,7 +37,7 @@ namespace DAMS
 
             services.AddTransient<IAppointmentService, AppointmentService>();
             services.AddScoped<IEmailSender, EmailSender>();
-
+            services.AddScoped<IDbInitializer, DbInitializer.DbInitializer>();// can use separate folder name to avoid confusion
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -62,7 +63,7 @@ namespace DAMS
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbInitializer dbInitializer) // invoke dbinitializer method in the pipeline
         {
             if (env.IsDevelopment())
             {
@@ -83,6 +84,8 @@ namespace DAMS
             
             app.UseSession(); // add this(implementation) to the pipeline after adding  //session blok comment above
 
+            dbInitializer.Initialize();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
